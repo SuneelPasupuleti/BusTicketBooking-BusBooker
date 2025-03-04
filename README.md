@@ -1,4 +1,4 @@
-# Bus Ticket System
+# Bus Ticket System 🚌
 
 ## Overview
 
@@ -11,40 +11,38 @@ BusTicketSystem/
 │── frontend/   # Client-side interface for users
 
 ## Features
-     User authentication and authorization
 
-    Bus schedule management
+  • User authentication and authorization
 
-    Ticket booking and cancellation
+  • Bus schedule management
 
-    Payment integration
+  • Ticket booking and cancellation
 
-    Admin dashboard for managing buses and bookings
+  • Payment integration
+
+  • Admin dashboard for managing buses and bookings
 
 ## Installation
 
 ### Prerequisites
 
-    Ensure you have the following installed:
+  • Ensure you have the following installed:
 
-    Node.js (for frontend and backend)
+  • Node.js (for frontend and backend)
 
-    npm or yarn
+  • npm or yarn
 
-    Database (e.g., MySQL, MongoDB, or PostgreSQL)
+  • Database (e.g., MySQL, MongoDB, or PostgreSQL)
 
 ## Usage
 
-    Open the application in a browser (default: http://localhost:3000)
+  • Open the application in a browser (default: http://localhost:3000)
 
-    Register/Login to book tickets
+  • Register/Login to book tickets
 
-    Admins can manage bus schedules and bookings
+  • Admins can manage bus schedules and bookings
 
 ## Contributing
 
-    Contributions are welcome! Please fork the repository and submit a pull request.
+  • Contributions are welcome! Please fork the repository and submit a pull request.
 
-## License
-
-    This project is licensed under the MIT License.
