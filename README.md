@@ -7,7 +7,9 @@ The Bus Ticket System is a full-stack web application that allows users to book 
 ## Project Structure
 
 BusTicketSystem/
+
 │── backend/    # Server-side logic and database management
+
 │── frontend/   # Client-side interface for users
 
 ## Features
