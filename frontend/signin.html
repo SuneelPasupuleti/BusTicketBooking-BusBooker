@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: url('https://img.freepik.com/free-photo/india-republic-day-celebration-with-3d-bus_23-2151016071.jpg?t=st=1741064236~exp=1741067836~hmac=76cd5d9c23594dc6de1526e57513ef7eb7bffb47d85a0bea03ca7e5fbd465bf8&w=1380') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 64px; /* Increased size */
+            font-weight: bold;
+            background: linear-gradient(50deg, #FF9933, #FFFFFF, #138808);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-align: center;
+            position: absolute;
+            top: 15px; /* Move to top */
+            width: 100%;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            padding: 40px;
+            text-align: center;
+            z-index: 1;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .switch-form {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .switch-form a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .switch-form a:hover {
+            text-decoration: underline;
+        }
+        
+        .error-message {
+            color: #f44336;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .success-message {
+            color: #4CAF50;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        /* Home page styles */
+        .home-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 800px;
+            padding: 40px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .logout-btn {
+            background-color: #f44336;
+            width: auto;
+        }
+        
+        .welcome-message {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .booking-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .booking-option {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .booking-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .booking-option h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .booking-option p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        #home-page {
+            display: none;
+        }
+
+        .main-menu-btn {
+            background: none;
+            color: #4CAF50;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: color 0.3s;
+            margin-top: 20px;
+        }
+    
+        .main-menu-btn:hover {
+            color: #45a049;
+        }
+
+    </style>
+</head>
+<body>
+    <h1 class="title">BusBooker</h1>
+    
+    <!-- Sign In Form -->
+    <div class="container" id="signin-container">
+        <h1>Sign In</h1>
+        <form id="signin-form">
+            <div class="form-group">
+                <label for="signin-email">Email</label>
+                <input type="email" id="signin-email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="signin-password">Password</label>
+                <input type="password" id="signin-password" placeholder="Enter your password" required>
+                <div class="error-message" id="signin-error">Invalid email or password. Please try again.</div>
+            </div>
+            <button type="submit">Sign In</button>
+        </form>
+        <div class="switch-form">
+            Don't have an account? <a href="#" id="show-signup">Sign Up</a>
+        </div>
+        <br>
+        <p>Have a Safe Signing Journey! 😊</p>
+    </div>
+
+    <!-- Sign Up Form -->
+    <div class="container" id="signup-container" style="display: none;">
+        <h1>Sign Up</h1>
+        <form id="signup-form">
+            <div class="form-group">
+                <label for="signup-name">Full Name</label>
+                <input type="text" id="signup-name" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-group">
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" placeholder="Create a password" required>
+                <div class="error-message" id="password-error">Password must be at least 6 characters long.</div>
+            </div>
+            <div class="form-group">
+                <label for="signup-confirm-password">Confirm Password</label>
+                <input type="password" id="signup-confirm-password" placeholder="Confirm your password" required>
+                <div class="error-message" id="confirm-password-error">Passwords do not match.</div>
+                <div class="success-message" id="signup-success">Account created successfully! Redirecting to sign in...</div>
+            </div>
+            <button type="submit">Sign Up</button>
+        </form>
+        <div class="switch-form">
+            Already have an account? <a href="#" id="show-signin">Sign In</a>
+        </div>
+        <br>
+        <p>Congrats! Welcome to our Family 🤝</p>
+    </div>
+
+    <script>
+        // Store users in localStorage
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        
+        // DOM Elements
+        const signinContainer = document.getElementById('signin-container');
+        const signupContainer = document.getElementById('signup-container');
+        const homePage = document.getElementById('home-page');
+        const showSignupLink = document.getElementById('show-signup');
+        const showSigninLink = document.getElementById('show-signin');
+        const signinForm = document.getElementById('signin-form');
+        const signupForm = document.getElementById('signup-form');
+        const logoutBtn = document.getElementById('logout-btn');
+        const welcomeMessage = document.getElementById('welcome-message');
+        const userName = document.getElementById('user-name');
+        
+        // Toggle between sign in and sign up forms
+        showSignupLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            signinContainer.style.display = 'none';
+            signupContainer.style.display = 'block';
+        });
+        
+        showSigninLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            signupContainer.style.display = 'none';
+            signinContainer.style.display = 'block';
+        });
+        
+        // Handle sign up form submission
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const nameInput = document.getElementById('signup-name');
+            const emailInput = document.getElementById('signup-email');
+            const passwordInput = document.getElementById('signup-password');
+            const confirmPasswordInput = document.getElementById('signup-confirm-password');
+            const passwordError = document.getElementById('password-error');
+            const confirmPasswordError = document.getElementById('confirm-password-error');
+            const signupSuccess = document.getElementById('signup-success');
+            
+            // Reset error messages
+            passwordError.style.display = 'none';
+            confirmPasswordError.style.display = 'none';
+            
+            // Validate password length
+            if (passwordInput.value.length < 6) {
+                passwordError.style.display = 'block';
+                return;
+            }
+            
+            // Validate password match
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                confirmPasswordError.style.display = 'block';
+                return;
+            }
+            
+            // Check if email already exists
+            const emailExists = users.some(user => user.email === emailInput.value);
+            if (emailExists) {
+                alert('Email already registered. Please use a different email or sign in.');
+                return;
+            }
+            
+            // Create new user object
+            const newUser = {
+                name: nameInput.value,
+                email: emailInput.value,
+                password: passwordInput.value
+            };
+            
+            // Add user to array and save to localStorage
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Show success message and redirect to sign in
+            signupSuccess.style.display = 'block';
+            setTimeout(() => {
+                signupContainer.style.display = 'none';
+                signinContainer.style.display = 'block';
+                signupForm.reset();
+                signupSuccess.style.display = 'none';
+            }, 2000);
+        });
+        
+        // Handle sign in form submission
+        signinForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const emailInput = document.getElementById('signin-email');
+            const passwordInput = document.getElementById('signin-password');
+            const signinError = document.getElementById('signin-error');
+            
+            // Reset error message
+            signinError.style.display = 'none';
+            
+            // Find user with matching email and password
+            const user = users.find(u => u.email === emailInput.value && u.password === passwordInput.value);
+            
+            if (user) {
+                // Store current user in session
+                sessionStorage.setItem('currentUser', JSON.stringify(user));
+                
+                // Redirect to home.html
+                window.location.href = 'home.html';
+            } else {
+                signinError.style.display = 'block';
+            }
+        });
+        
+        // Handle logout
+        logoutBtn.addEventListener('click', () => {
+            // Clear current user from session
+            sessionStorage.removeItem('currentUser');
+            
+            // Show sign in page
+            homePage.style.display = 'none';
+            signinContainer.style.display = 'block';
+        });
+        
+        // Check if user is already signed in (page refresh)
+        const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+        if (currentUser) {
+            userName.textContent = currentUser.name;
+            signinContainer.style.display = 'none';
+            homePage.style.display = 'block';
+        }
+
+    </script>
+</body>
+</html>

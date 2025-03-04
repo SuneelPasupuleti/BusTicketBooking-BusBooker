@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1741025556167,
+    "busId": 1,
+    "busName": "Orange Travels Express",
+    "from": "Hyderabad",
+    "to": "Visakhapatnam",
+    "date": "2025-03-05",
+    "departureTime": "08:00 AM",
+    "passengerName": "Sam",
+    "email": "Sam@gmail.com",
+    "phone": "+918374311523",
+    "seats": 1,
+    "totalFare": 1200,
+    "bookingTime": "2025-03-03T18:12:36.167Z"
+  },
+  {
+    "id": 1741027489354,
+    "busId": 16,
+    "busName": "Kaveri Travels",
+    "from": "Hyderabad",
+    "to": "Vijayawada",
+    "date": "2025-03-05",
+    "departureTime": "06:00 PM",
+    "passengerName": "Sam",
+    "email": "Sam@gmail.com",
+    "phone": "7845961230",
+    "seats": 1,
+    "totalFare": 650,
+    "bookingTime": "2025-03-03T18:44:49.354Z"
+  },
+  {
+    "id": 1741065852242,
+    "busId": 15,
+    "busName": "Orange Travels",
+    "from": "Hyderabad",
+    "to": "Vijayawada",
+    "date": "2025-03-05",
+    "departureTime": "05:00 AM",
+    "passengerName": "Sam",
+    "email": "Sam@gmail.com",
+    "phone": "7845129630",
+    "seats": 1,
+    "totalFare": 600,
+    "bookingTime": "2025-03-04T05:24:12.242Z"
+  }
+]

@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Ticket Reservation System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .bus-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .transition {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Add this datalist element inside the <body> tag -->
+    <datalist id="cities">
+        <option value="Hyderabad">
+        <option value="Visakhapatnam">
+        <option value="Chennai">
+        <option value="Bengaluru">
+        <option value="Mumbai">
+        <option value="Pune">
+        <option value="New Delhi">
+        <option value="Kolkata">
+        <option value="Goa">
+        <option value="Ooty">
+        <option value="Ahmedabad">
+        <option value="Vijayawada">
+    </datalist>
+    <nav class="bg-blue-600 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">BusBooker</h1>
+            <div class="space-x-4">
+                <button id="homeBtn" class="font-medium hover:underline">Home</button>
+                <button id="myBookingsBtn" class="font-medium hover:underline">My Bookings</button>
+                <button id="adminBtn" class="font-medium hover:underline">Admin</button>
+                <button id="profileBtn" class="font-medium hover:underline">Profile</button>
+                <!-- Add this button to the navigation bar -->
+                <button id="emergencyAlertBtn" class="font-medium hover:underline">Emergency Alert</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-4">
+        <!-- Search Section -->
+        <section id="searchSection" class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Search for Bus Tickets</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-gray-700 mb-2" for="fromLocation">From</label>
+                    <input list="cities" id="fromLocation" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Departure City">
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2" for="toLocation">To</label>
+                    <input list="cities" id="toLocation" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Arrival City">
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2" for="travelDate">Date</label>
+                    <input type="date" id="travelDate" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex items-end">
+                    <button id="searchBtn" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Search Buses</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add the image here -->
+        <div class="flex justify-center mb-6">
+            <img src="https://img.freepik.com/premium-vector/man-buying-bus-ticket-online-smartphone-vector-illustration_357257-1402.jpg?semt=ais_hybrid" alt="Bus Image" class="rounded-lg shadow-md">
+        </div>
+
+        <!-- Emergency Alert Form Section -->
+        <section id="emergencyAlertFormSection" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+            <h2 class="text-xl font-semibold mb-4">Emergency Alert</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-700 mb-2" for="bookingId">Booking ID</label>
+                    <input type="number" id="bookingId" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter booking ID" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2" for="emergencyMessage">Message</label>
+                    <textarea id="emergencyMessage" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your message" required></textarea>
+                </div>
+            </div>
+            <div class="flex items-end mt-4">
+                <button id="sendEmergencyBtn" class="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition">Send Emergency Alert</button>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="resultsSection" class="mb-6 hidden">
+            <h2 class="text-xl font-semibold mb-4">Available Buses</h2>
+            <div id="busResults" class="grid grid-cols-1 gap-4">
+                <!-- Bus results will be populated here -->
+            </div>
+        </section>
+
+        <!-- Booking Form Section -->
+        <section id="bookingSection" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+            <h2 class="text-xl font-semibold mb-4">Book Your Ticket</h2>
+            <div id="selectedBusInfo" class="mb-4 p-4 bg-gray-100 rounded">
+                <!-- Selected bus info will be displayed here -->
+            </div>
+            <form id="bookingForm">
+                <input type="hidden" id="busId">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="passengerName">Full Name</label>
+                        <input type="text" id="passengerName" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="email">Email</label>
+                        <input type="email" id="email" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="phone">Phone Number</label>
+                        <input type="tel" id="phone" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="seats">Number of Seats</label>
+                        <input type="number" id="seats" min="1" value="1" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                </div>
+                <div id="fareDetails" class="mb-4 p-4 bg-gray-100 rounded">
+                    <!-- Fare details will be displayed here -->
+                </div>
+                <div class="flex justify-between">
+                    <button type="button" id="backToResults" class="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 transition">Back to Results</button>
+                    <button type="submit" class="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition">Confirm Booking</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Booking Confirmation Section -->
+        <section id="confirmationSection" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+            <div class="text-center">
+                <svg class="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <h2 class="text-2xl font-bold text-green-600 mb-2">Booking Confirmed!</h2>
+                <p class="text-gray-600 mb-4">Your ticket has been booked successfully.</p>
+            </div>
+            <div id="bookingDetails" class="mb-6 p-4 bg-gray-100 rounded">
+                <!-- Booking details will be displayed here -->
+            </div>
+            <div class="text-center">
+                <button id="backToHomeBtn" class="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 transition">Book Another Ticket</button>
+                <button id="closeConfirmationBtn" class="bg-gray-600 text-white py-2 px-6 rounded hover:bg-gray-700 transition">Close</button>
+            </div>
+        </section>
+
+        <!-- My Bookings Section -->
+        <section id="myBookingsSection" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+            <h2 class="text-xl font-semibold mb-4">My Bookings</h2>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2" for="bookingEmail">Enter your email to view bookings</label>
+                <div class="flex">
+                    <input type="email" id="bookingEmail" class="flex-grow p-2 border rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Email used for booking">
+                    <button id="findBookingsBtn" class="bg-blue-600 text-white py-2 px-4 rounded-r hover:bg-blue-700 transition">Find</button>
+                </div>
+            </div>
+            <div id="userBookingsList" class="space-y-4">
+                <!-- User bookings will be displayed here -->
+            </div>
+        </section>
+
+        <!-- Admin Section -->
+        <section id="adminSection" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+            <h2 class="text-xl font-semibold mb-4">Admin Dashboard</h2>
+            
+            <!-- Add New Bus Form -->
+            <div class="mb-6 p-4 bg-gray-100 rounded">
+                <h3 class="text-lg font-medium mb-3">Add New Bus</h3>
+                <form id="addBusForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="busName">Bus Name</label>
+                        <input type="text" id="busName" class="w-full p-2 border rounded" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="busFrom">From</label>
+                        <input type="text" id="busFrom" class="w-full p-2 border rounded" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="busTo">To</label>
+                        <input type="text" id="busTo" class="w-full p-2 border rounded" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="busDate">Date</label>
+                        <input type="date" id="busDate" class="w-full p-2 border rounded" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="busDeparture">Departure Time</label>
+                        <input type="text" id="busDeparture" class="w-full p-2 border rounded" placeholder="e.g. 08:00 AM" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="busArrival">Arrival Time</label>
+                        <input type="text" id="busArrival" class="w-full p-2 border rounded" placeholder="e.g. 12:00 PM" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="busFare">Fare (Rs)</label>
+                        <input type="number" id="busFare" min="1" class="w-full p-2 border rounded" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="busSeats">Total Seats</label>
+                        <input type="number" id="busSeats" min="1" class="w-full p-2 border rounded" required>
+                    </div>
+                    <div class="md:col-span-2">
+                        <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition">Add Bus</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Search Booking by ID -->
+            <div class="mb-6 p-4 bg-gray-100 rounded">
+                <h3 class="text-lg font-medium mb-3">Search Booking by ID</h3>
+                <div class="flex">
+                    <input type="number" id="searchBookingId" class="flex-grow p-2 border rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter Booking ID">
+                    <button id="searchBookingBtn" class="bg-blue-600 text-white py-2 px-4 rounded-r hover:bg-blue-700 transition">Search</button>
+                </div>
+            </div>
+            
+            <!-- View All Bookings -->
+            <div>
+                <h3 class="text-lg font-medium mb-3">All Bookings</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="py-2 px-4 border-b text-left">ID</th>
+                                <th class="py-2 px-4 border-b text-left">Passenger</th>
+                                <th class="py-2 px-4 border-b text-left">Bus</th>
+                                <th class="py-2 px-4 border-b text-left">Route</th>
+                                <th class="py-2 px-4 border-b text-left">Date</th>
+                                <th class="py-2 px-4 border-b text-left">Seats</th>
+                                <th class="py-2 px-4 border-b text-left">Total Fare</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allBookingsList">
+                            <!-- All bookings will be displayed here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Emergency Alerts Section -->
+            <div class="mt-6">
+                <h3 class="text-lg font-medium mb-3">Emergency Alerts</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="py-2 px-4 border-b text-left">Booking ID</th>
+                                <th class="py-2 px-4 border-b text-left">Message</th>
+                            </tr>
+                        </thead>
+                        <tbody id="emergencyAlertsList">
+                            <!-- Emergency alerts will be displayed here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <!-- Profile Section -->
+        <section id="profileSection" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+            <h2 class="text-xl font-semibold mb-4">Profile</h2>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">Full Name</label>
+                <p id="profileName" class="p-2 border rounded bg-gray-100"></p>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">Email</label>
+                <p id="profileEmail" class="p-2 border rounded bg-gray-100"></p>
+            </div>
+        <button id="logoutBtn" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition">Logout</button>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white p-4 mt-auto">
+        <div class="container mx-auto text-center">
+            <p>Bus Ticket Reservation System &copy; 2025</p>
+            <p class="text-sm mt-1">This local server will automatically shut down after 24 hours.</p>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div id="messageModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-1/3">
+            <h2 id="modalTitle" class="text-xl font-semibold mb-4"></h2>
+            <p id="modalMessage" class="text-gray-700 mb-4"></p>
+            <button id="modalCloseBtn" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Close</button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-1/3">
+            <h2 class="text-xl font-semibold mb-4">Confirm Cancellation</h2>
+            <p class="text-gray-700 mb-4">Are you sure you want to cancel this booking?</p>
+            <div class="flex justify-end">
+                <button id="confirmCancelBtn" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition mr-2">Yes</button>
+                <button id="cancelCancelBtn" class="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700 transition">No</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const API_URL = 'http://localhost:5001/api'; // Update the port if necessary
+        // DOM Elements
+        const searchSection = document.getElementById('searchSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const bookingSection = document.getElementById('bookingSection');
+        const confirmationSection = document.getElementById('confirmationSection');
+        const myBookingsSection = document.getElementById('myBookingsSection');
+        const adminSection = document.getElementById('adminSection');
+        const profileSection = document.getElementById('profileSection');
+        const profileBtn = document.getElementById('profileBtn');
+        const profileName = document.getElementById('profileName');
+        const profileEmail = document.getElementById('profileEmail');
+        const logoutBtn = document.getElementById('logoutBtn');
+        
+        const fromLocation = document.getElementById('fromLocation');
+        const toLocation = document.getElementById('toLocation');
+        const travelDate = document.getElementById('travelDate');
+        const searchBtn = document.getElementById('searchBtn');
+        const busResults = document.getElementById('busResults');
+        
+        const selectedBusInfo = document.getElementById('selectedBusInfo');
+        const busId = document.getElementById('busId');
+        const seats = document.getElementById('seats');
+        const fareDetails = document.getElementById('fareDetails');
+        const bookingForm = document.getElementById('bookingForm');
+        const backToResults = document.getElementById('backToResults');
+        
+        const bookingDetails = document.getElementById('bookingDetails');
+        const backToHomeBtn = document.getElementById('backToHomeBtn');
+        
+        const homeBtn = document.getElementById('homeBtn');
+        const myBookingsBtn = document.getElementById('myBookingsBtn');
+        const adminBtn = document.getElementById('adminBtn');
+        
+        const bookingEmail = document.getElementById('bookingEmail');
+        const findBookingsBtn = document.getElementById('findBookingsBtn');
+        const userBookingsList = document.getElementById('userBookingsList');
+        
+        const addBusForm = document.getElementById('addBusForm');
+        const allBookingsList = document.getElementById('allBookingsList');
+        
+        // Set default date to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        travelDate.valueAsDate = tomorrow;
+        
+        // Helper Functions
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
+
+            // Show the requested section
+            document.getElementById(section).classList.remove('hidden');
+        }
+        
+        function formatDate(dateString) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+        
+        // Event Listeners
+        searchBtn.addEventListener('click', async () => {
+            try {
+                const from = fromLocation.value;
+                const to = toLocation.value;
+                const date = travelDate.value;
+                
+                // Build query string
+                let queryParams = new URLSearchParams();
+                if (from) queryParams.append('from', from);
+                if (to) queryParams.append('to', to);
+                if (date) queryParams.append('date', date);
+                
+                const response = await fetch(`${API_URL}/buses/search?${queryParams}`);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Failed to search buses');
+                }
+
+                const buses = await response.json();
+                
+                // Display results
+                busResults.innerHTML = '';
+                
+                if (buses.length === 0) {
+                    busResults.innerHTML = `
+                        <div class="text-center p-6 bg-white rounded-lg shadow">
+                            <p class="text-lg text-gray-600">No buses found matching your criteria.</p>
+                            <p class="mt-2">Try different search parameters or another date.</p>
+                        </div>
+                    `;
+                } else {
+                    buses.forEach(bus => {
+                        const busCard = document.createElement('div');
+                        busCard.className = 'bg-white rounded-lg shadow-md p-4 bus-card transition';
+                        busCard.innerHTML = `
+                            <div class="flex flex-col md:flex-row justify-between">
+                                <div>
+                                    <h3 class="text-lg font-semibold">${bus.name}</h3>
+                                    <p class="text-gray-600">${bus.from} to ${bus.to}</p>
+                                    <p class="text-sm text-gray-500">${formatDate(bus.date)}</p>
+                                </div>
+                                <div class="mt-2 md:mt-0 md:text-right">
+                                    <p class="font-semibold">Departure: ${bus.departureTime}</p>
+                                    <p class="font-semibold">Arrival: ${bus.arrivalTime}</p>
+                                    <p class="text-green-600 font-bold mt-1">Rs.${bus.fare.toFixed(2)}</p>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex flex-col md:flex-row justify-between items-center">
+                                <p class="text-sm text-blue-600">${bus.availableSeats} seats available</p>
+                                <button class="book-btn mt-2 md:mt-0 bg-blue-600 text-white py-1 px-4 rounded hover:bg-blue-700 transition" data-id="${bus.id}">
+                                    Book Now
+                                </button>
+                            </div>
+                        `;
+                        busResults.appendChild(busCard);
+                        
+                        // Add event listener to the book button
+                        busCard.querySelector('.book-btn').addEventListener('click', () => selectBus(bus.id));
+                    });
+                }
+                
+                showSection('resultsSection');
+            } catch (error) {
+                console.error('Error searching buses:', error);
+                alert(`Failed to search buses. Please try again. Error: ${error.message}`);
+            }
+        });
+        
+        // Function to select a bus and show booking form
+        async function selectBus(id) {
+            try {
+                const response = await fetch(`${API_URL}/buses/${id}`);
+                const bus = await response.json();
+                
+                // Store bus ID
+                busId.value = bus.id;
+                
+                // Display bus information
+                selectedBusInfo.innerHTML = `
+                    <h3 class="text-lg font-semibold">${bus.name}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+                        <p><span class="font-medium">From:</span> ${bus.from}</p>
+                        <p><span class="font-medium">To:</span> ${bus.to}</p>
+                        <p><span class="font-medium">Date:</span> ${formatDate(bus.date)}</p>
+                        <p><span class="font-medium">Time:</span> ${bus.departureTime} - ${bus.arrivalTime}</p>
+                    </div>
+                `;
+                
+                // Update fare details
+                updateFareDetails(bus.fare);
+                
+                // Add event listener to seat input
+                seats.addEventListener('input', () => updateFareDetails(bus.fare));
+                
+                showSection('bookingSection');
+            } catch (error) {
+                console.error('Error selecting bus:', error);
+                alert('Failed to load bus details. Please try again.');
+            }
+        }
+
+        // Add event listener to the "Book Now" button
+        document.addEventListener('click', (event) => {
+            if (event.target.classList.contains('book-btn')) {
+                const busId = event.target.getAttribute('data-id');
+                selectBus(busId);
+            }
+        });
+        
+        function updateFareDetails(fare) {
+            const numSeats = parseInt(seats.value) || 1;
+            const totalFare = numSeats * fare;
+            
+            fareDetails.innerHTML = `
+                <div class="flex justify-between">
+                    <p>Base fare per seat:</p>
+                    <p>Rs.${fare.toFixed(2)}</p>
+                </div>
+                <div class="flex justify-between font-semibold mt-2">
+                    <p>Total (${numSeats} seat${numSeats > 1 ? 's' : ''}):</p>
+                    <p>Rs.${totalFare.toFixed(2)}</p>
+                </div>
+            `;
+        }
+        
+        bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const formData = {
+                    busId: parseInt(busId.value),
+                    passengerName: document.getElementById('passengerName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    seats: parseInt(seats.value)
+                };
+                
+                const response = await fetch(`${API_URL}/bookings`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Failed to create booking');
+                }
+                
+                const booking = await response.json();
+                
+                // Display booking details
+                bookingDetails.innerHTML = `
+                    <h3 class="font-semibold mb-2">Booking Reference: #${booking.id}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <p><span class="font-medium">Bus:</span> ${booking.busName}</p>
+                        <p><span class="font-medium">Route:</span> ${booking.from} to ${booking.to}</p>
+                        <p><span class="font-medium">Date:</span> ${formatDate(booking.date)}</p>
+                        <p><span class="font-medium">Departure:</span> ${booking.departureTime}</p>
+                        <p><span class="font-medium">Passenger:</span> ${booking.passengerName}</p>
+                        <p><span class="font-medium">Seats:</span> ${booking.seats}</p>
+                        <p><span class="font-medium">Total Fare:</span> Rs.${booking.totalFare.toFixed(2)}</p>
+                    </div>
+                    <p class="mt-4 text-sm text-gray-600">A confirmation has been sent to ${booking.email}</p>
+                `;
+                
+                showSection('confirmationSection');
+                
+                // Reset the booking form
+                bookingForm.reset();
+            } catch (error) {
+                console.error('Error creating booking:', error);
+                alert(error.message || 'Failed to create booking. Please try again.');
+            }
+        });
+        
+        backToResults.addEventListener('click', () => {
+            showSection('resultsSection');
+        });
+        
+        backToHomeBtn.addEventListener('click', () => {
+            showSection('searchSection');
+        });
+        
+        homeBtn.addEventListener('click', () => {
+            window.location.href = 'home.html';
+        });
+        
+        myBookingsBtn.addEventListener('click', () => {
+            showSection('myBookingsSection');
+        });
+        
+        adminBtn.addEventListener('click', () => {
+            const passcode = prompt('Please enter the admin passcode:');
+            if (passcode === 'admin') { // Replace 'admin' with the actual passcode
+                showAdminSection();
+            } else {
+                alert('Incorrect passcode. Access denied.');
+            }
+        });
+        
+        findBookingsBtn.addEventListener('click', async () => {
+            const email = bookingEmail.value;
+            
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/bookings`);
+                const allBookings = await response.json();
+                
+                // Filter bookings by email
+                const userBookings = allBookings.filter(booking => booking.email.toLowerCase() === email.toLowerCase());
+                
+                userBookingsList.innerHTML = '';
+                
+                if (userBookings.length === 0) {
+                    userBookingsList.innerHTML = `
+                        <div class="text-center p-4 bg-gray-100 rounded">
+                            <p>No bookings found for this email.</p>
+                        </div>
+                    `;
+                } else {
+                    userBookings.forEach(booking => {
+                        const bookingCard = document.createElement('div');
+                        bookingCard.className = 'bg-white rounded-lg shadow-md p-4';
+                        bookingCard.innerHTML = `
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-lg font-semibold">${booking.busName}</h3>
+                                    <p class="text-gray-600">${booking.from} to ${booking.to}</p>
+                                    <p class="text-sm text-gray-500">${formatDate(booking.date)} at ${booking.departureTime}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-semibold">Booking #${booking.id}</p>
+                                    <p>${booking.seats} seat${booking.seats > 1 ? 's' : ''}</p>
+                                    <p class="text-green-600 font-bold">Rs.${booking.totalFare.toFixed(2)}</p>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex justify-end">
+                                <button class="cancel-btn bg-red-500 text-white py-1 px-3 rounded text-sm hover:bg-red-600 transition" data-id="${booking.id}">
+                                    Cancel Booking
+                                </button>
+                            </div>
+                        `;
+                        userBookingsList.appendChild(bookingCard);
+                        
+                        // Add event listener to the cancel button
+                        bookingCard.querySelector('.cancel-btn').addEventListener('click', (e) => cancelBooking(e, booking.id));
+                    });
+                }
+            } catch (error) {
+                console.error('Error finding bookings:', error);
+                alert('Failed to find bookings. Please try again.');
+            }
+        });
+        
+        async function cancelBooking(e, id) {
+            showConfirmationModal(async () => {
+                try {
+                    const response = await fetch(`${API_URL}/bookings/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to cancel booking');
+                    }
+                    
+                    // Remove the booking card from the UI
+                    e.target.closest('.bg-white').remove();
+                    
+                    showModal('Success', 'Booking cancelled successfully');
+                    
+                    // Reload all bookings in admin view if active
+                    if (!adminSection.classList.contains('hidden')) {
+                        loadAllBookings();
+                    }
+                } catch (error) {
+                    console.error('Error cancelling booking:', error);
+                    showModal('Error', 'Failed to cancel booking. Please try again.');
+                }
+            });
+        }
+
+        // Function to show confirmation modal
+        function showConfirmationModal(onConfirm) {
+            const confirmationModal = document.getElementById('confirmationModal');
+            const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+            const cancelCancelBtn = document.getElementById('cancelCancelBtn');
+
+            confirmationModal.classList.remove('hidden');
+
+            confirmCancelBtn.addEventListener('click', () => {
+                confirmationModal.classList.add('hidden');
+                onConfirm();
+            });
+
+            cancelCancelBtn.addEventListener('click', () => {
+                confirmationModal.classList.add('hidden');
+            });
+        }
+
+        // Function to show modal
+        function showModal(title, message) {
+            const modal = document.getElementById('messageModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
+
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modal.classList.remove('hidden');
+
+            modalCloseBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+        }
+        
+        addBusForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const formData = {
+                    name: document.getElementById('busName').value,
+                    from: document.getElementById('busFrom').value,
+                    to: document.getElementById('busTo').value,
+                    date: document.getElementById('busDate').value,
+                    departureTime: document.getElementById('busDeparture').value,
+                    arrivalTime: document.getElementById('busArrival').value,
+                    fare: parseFloat(document.getElementById('busFare').value),
+                    totalSeats: parseInt(document.getElementById('busSeats').value)
+                };
+                
+                const response = await fetch(`${API_URL}/buses`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to add new bus');
+                }
+                
+                // Reset the form
+                addBusForm.reset();
+                
+                alert('New bus added successfully');
+            } catch (error) {
+                console.error('Error adding bus:', error);
+                alert('Failed to add bus. Please try again.');
+            }
+        });
+        
+        async function loadAllBookings() {
+            try {
+                const response = await fetch(`${API_URL}/bookings`);
+                const bookings = await response.json();
+                
+                allBookingsList.innerHTML = ''; // Clear existing bookings
+                
+                bookings.forEach(booking => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="py-2 px-4 border-b">${booking.id}</td>
+                        <td class="py-2 px-4 border-b">${booking.passengerName}</td>
+                        <td class="py-2 px-4 border-b">${booking.busName}</td>
+                        <td class="py-2 px-4 border-b">${booking.from} to ${booking.to}</td>
+                        <td class="py-2 px-4 border-b">${booking.date}</td>
+                        <td class="py-2 px-4 border-b">${booking.seats}</td>
+                        <td class="py-2 px-4 border-b">Rs.${booking.totalFare.toFixed(2)}</td>
+                    `;
+                    allBookingsList.appendChild(row);
+                });
+                
+                if (bookings.length === 0) {
+                    const emptyRow = document.createElement('tr');
+                    emptyRow.innerHTML = `
+                        <td colspan="7" class="py-4 text-center text-gray-500">No bookings found</td>
+                    `;
+                    allBookingsList.appendChild(emptyRow);
+                }
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                const errorRow = document.createElement('tr');
+                errorRow.innerHTML = `
+                    <td colspan="7" class="py-4 text-center text-red-500">Error loading bookings</td>
+                `;
+                allBookingsList.appendChild(errorRow);
+            }
+        }
+        
+        // Show profile section
+        profileBtn.addEventListener('click', () => {
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            if (currentUser) {
+                profileName.textContent = currentUser.name;
+                profileEmail.textContent = currentUser.email;
+                showSection('profileSection');
+            } else {
+                alert('No user is currently signed in.');
+            }
+        });
+
+        // Handle logout
+        logoutBtn.addEventListener('click', () => {
+            // Clear current user from session
+            sessionStorage.removeItem('currentUser');
+            
+            // Redirect to sign-in page
+            window.location.href = 'signin.html';
+        });
+
+        // DOM Elements for Emergency Alert
+        const emergencyAlertBtn = document.getElementById('emergencyAlertBtn');
+        const emergencyAlertFormSection = document.getElementById('emergencyAlertFormSection');
+
+        // Event Listener for Emergency Alert Button
+        emergencyAlertBtn.addEventListener('click', () => {
+            showSection('emergencyAlertFormSection');
+        });
+
+        // Add event listener to the "Close" button
+        document.getElementById('closeConfirmationBtn').addEventListener('click', () => {
+            showSection('searchSection');
+        });
+
+        // DOM Elements for Admin Section
+        const searchBookingId = document.getElementById('searchBookingId');
+        const searchBookingBtn = document.getElementById('searchBookingBtn');
+
+        // Event Listener for Search Booking Button
+        searchBookingBtn.addEventListener('click', async () => {
+            const bookingIdValue = searchBookingId.value;
+
+            if (!bookingIdValue) {
+                alert('Please enter a booking ID.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/bookings/${bookingIdValue}`);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Failed to search booking');
+                }
+
+                const booking = await response.json();
+
+                // Display the booking details
+                allBookingsList.innerHTML = `
+                    <tr>
+                        <td class="py-2 px-4 border-b">${booking.id}</td>
+                        <td class="py-2 px-4 border-b">${booking.passengerName}</td>
+                        <td class="py-2 px-4 border-b">${booking.busName}</td>
+                        <td class="py-2 px-4 border-b">${booking.from} to ${booking.to}</td>
+                        <td class="py-2 px-4 border-b">${booking.date}</td>
+                        <td class="py-2 px-4 border-b">${booking.seats}</td>
+                        <td class="py-2 px-4 border-b">Rs.${booking.totalFare.toFixed(2)}</td>
+                    </tr>
+                `;
+            } catch (error) {
+                console.error('Error searching booking:', error);
+                alert(`Failed to search booking. Please try again. Error: ${error.message}`);
+            }
+        });
+
+        // DOM Elements for Emergency Alert
+        const sendEmergencyBtn = document.getElementById('sendEmergencyBtn');
+        const bookingId = document.getElementById('bookingId');
+        const emergencyMessage = document.getElementById('emergencyMessage');
+        const emergencyAlertsList = document.getElementById('emergencyAlertsList');
+
+        // Event Listener for Emergency Alert
+        sendEmergencyBtn.addEventListener('click', async () => {
+            const bookingIdValue = bookingId.value;
+            const message = emergencyMessage.value;
+
+            if (!bookingIdValue || !message) {
+                alert('Please fill in all the fields.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/emergency-alerts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ bookingId: bookingIdValue, message })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Emergency alert sent successfully!');
+                    bookingId.value = '';
+                    emergencyMessage.value = '';
+
+                    // Add the emergency alert to the admin section
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="py-2 px-4 border-b">${bookingIdValue}</td>
+                        <td class="py-2 px-4 border-b">${message}</td>
+                    `;
+                    emergencyAlertsList.appendChild(row);
+                } else {
+                    alert(`Failed to send emergency alert: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Error sending emergency alert:', error);
+                alert('Failed to send emergency alert. Please try again.');
+            }
+        });
+
+        // Function to load emergency alerts
+        async function loadEmergencyAlerts() {
+            try {
+                const response = await fetch(`${API_URL}/emergency-alerts`);
+                const alerts = await response.json();
+
+                emergencyAlertsList.innerHTML = ''; // Clear existing alerts
+
+                alerts.forEach(alert => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="py-2 px-4 border-b">${alert.bookingId}</td>
+                        <td class="py-2 px-4 border-b">${alert.message}</td>
+                    `;
+                    emergencyAlertsList.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading emergency alerts:', error);
+            }
+        }
+
+        // Call this function when you need to show the Admin Section
+        function showAdminSection() {
+            showSection('adminSection');
+            loadAllBookings();
+            loadEmergencyAlerts();
+        }
+
+
+
+        // Event Listener for Sign-In Button
+        document.getElementById('signInBtn').addEventListener('click', async () => {
+            const email = document.getElementById('signInEmail').value;
+            const password = document.getElementById('signInPassword').value;
+
+            if (!email || !password) {
+                alert('Please enter your email and password.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/signin`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Store user information in session storage
+                    sessionStorage.setItem('currentUser', JSON.stringify(result.user));
+
+                    // Show the "Search for Bus Tickets" section
+                    showSection('searchSection');
+                } else {
+                    alert(`Failed to sign in: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Error signing in:', error);
+                alert('Failed to sign in. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
